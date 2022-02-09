@@ -16,8 +16,8 @@ use web3_macros::SignV4;
 pub struct BuyCommercialCity {
     #[web3_type("ParamType::Uint(256)")]
     pub buy_way: u64,
-    // #[web3_type("ParamType::String")]
-    // pub coordinate: String,
+    #[web3_type("ParamType::String")]
+    pub coordinate: String,
     #[web3_type("ParamType::Address")]
     pub account: H160,
     #[web3_type("ParamType::Uint(256)")]
@@ -93,8 +93,7 @@ impl Handlers {
         path: web::Path<(String, u64, String, String, u64)>,
         _data: web::Data<AppData>,
     ) -> Result<HttpResponse, XProtocolError> {
-        let (chain_id, buy_way, coordinate, address, nonce) =
-            path.into_inner();
+        let (chain_id, buy_way, coordinate, address, nonce) = path.into_inner();
         // let number = app_data::get_number(
         //     &_data.pool,
         //     address.clone(),
@@ -115,10 +114,10 @@ impl Handlers {
         let contract = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
         let a = coordinate.clone();
         let contract = H160::from_str(contract).map_err(|_| XProtocolError::InternalServerError)?;
-        println!("{:?},{:?},{:?},{:?},",buy_way,a,account,nonce);
+        println!("{:?},{:?},{:?},{:?},", buy_way, a, account, nonce);
         let sign: [u8; 32] = BuyCommercialCity {
             buy_way,
-            // coordinate:a,
+            coordinate: a,
             account,
             nonce,
         }
@@ -155,7 +154,7 @@ impl Handlers {
         )
         .await;
         let number = number.parse::<u64>().unwrap();
-        println!("number {:?}",number);
+        println!("number {:?}", number);
         let address = address.to_lowercase();
         let account = address
             .parse()
